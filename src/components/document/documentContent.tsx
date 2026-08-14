@@ -211,8 +211,13 @@ function ClosingPage({ d }: { d: DocumentData }) {
 export function buildPages(d: DocumentData): ReactNode[] {
   const pages: ReactNode[] = [<Intro key="intro" d={d} />];
   if (isInternshipType(d.docType)) pages.push(<PerformancePage key="perf" d={d} />);
-  const annualCtc = isInternshipType(d.docType) ? 0 : parseAmount(d.ctc);
-  if (annualCtc > 0) pages.push(<SalaryPage key="salary" annualCtc={annualCtc} />);
+  
+  // Show salary page for offer/appointment letters OR for internship-cum-placement with CTC
+  const annualCtc = parseAmount(d.ctc);
+  const showSalary = (d.docType === "offer" || d.docType === "appointment") || 
+                     (d.docType === "internship-placement" && annualCtc > 0);
+  if (showSalary && annualCtc > 0) pages.push(<SalaryPage key="salary" annualCtc={annualCtc} />);
+  
   pages.push(<TermsPage key="terms" d={d} />);
   pages.push(<ClosingPage key="close" d={d} />);
   return pages;

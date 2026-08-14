@@ -237,6 +237,15 @@ function Editor() {
                 <Field label="Stipend" hint="Type “Unpaid” or an amount like ₹8,000">
                   <Input value={data.stipend} onChange={(e) => set("stipend", e.target.value)} />
                 </Field>
+                {data.docType === "internship-placement" && (
+                  <Field label="Placement Salary (Optional)" hint="Enter salary like ₹4,50,000 per annum">
+                    <Input
+                      value={data.ctc}
+                      placeholder="₹XX,XXX per annum"
+                      onChange={(e) => set("ctc", e.target.value)}
+                    />
+                  </Field>
+                )}
               </>
             ) : (
               <>
