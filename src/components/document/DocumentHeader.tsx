@@ -1,5 +1,6 @@
 import { BRAND } from "@/lib/brand";
 import logoTrimmed from "@/assets/document/autorevive-logo-trim.png";
+import type { DocumentData } from "@/lib/brand";
 
 function ContactRow({ icon, text }: { icon: React.ReactNode; text: string }) {
   return (
@@ -12,7 +13,7 @@ function ContactRow({ icon, text }: { icon: React.ReactNode; text: string }) {
   );
 }
 
-export function DocumentHeader() {
+export function DocumentHeader({ data }: { data?: DocumentData }) {
   return (
     <div className="relative">
       {/* decorative corner */}
@@ -52,6 +53,14 @@ export function DocumentHeader() {
         <div className="h-[0.6mm] flex-1 bg-doc-dark" />
         <div className="h-[0.6mm] w-[38mm] bg-brand" />
       </div>
+
+      {data?.candidateName && (
+        <div className="mt-[4mm] px-[14mm]">
+          <p className="text-[3mm] font-bold uppercase text-doc-ink">
+            Candidate: <span className="text-brand">{data.candidateName}</span>
+          </p>
+        </div>
+      )}
     </div>
   );
 }

@@ -23,7 +23,7 @@ export function A4Document({
         <section key={i} className="a4-page">
           <DocumentWatermark />
           <div className="a4-header">
-            <DocumentHeader />
+            <DocumentHeader data={data} />
           </div>
           <div className="a4-body">
             {body}
