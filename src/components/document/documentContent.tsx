@@ -132,7 +132,7 @@ function PerformancePage({ d }: { d: DocumentData }) {
       </ul>
       <Title>Placement &amp; Starting Compensation</Title>
       <P>
-        If selected for full-time employment based on the internship performance evaluation, you will be offered a starting compensation of <B>₹XX,XXX per month</B>. The final designation, compensation, employment terms, and applicable benefits will be communicated separately through the Employment/Appointment Letter.
+        If selected for full-time employment based on the internship performance evaluation, you will be offered a starting compensation of <B>₹XX,XXX per annum</B>. The final designation, compensation, employment terms, and applicable benefits will be communicated separately through the Employment/Appointment Letter.
       </P>
       <P>
         Full-time employment is subject to satisfactory internship performance, successful evaluation, availability of a suitable position, and the Company&rsquo;s business requirements. Completion of the internship does not constitute an automatic entitlement to employment.
