@@ -118,7 +118,7 @@ function Editor() {
       <header className="border-b border-border bg-card/80 backdrop-blur">
         <div className="mx-auto flex max-w-[900px] flex-wrap items-center justify-between gap-4 px-4 py-4 sm:px-6">
           <div className="flex items-center gap-3">
-            <img src={BRAND.logoUrl} alt="AutoRevive" className="h-9 w-auto" />
+            <img src={BRAND} alt="AutoRevive" className="h-9 w-auto" />
             <div className="hidden sm:block">
               <h1 className="text-sm font-semibold tracking-tight">HR Letter Studio</h1>
               <p className="text-xs text-muted-foreground">
