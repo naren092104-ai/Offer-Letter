@@ -35,7 +35,7 @@ function Intro({ d }: { d: DocumentData }) {
   const name = `${d.salutation} ${d.candidateName || "________"}`;
   const label =
     d.docType === "internship"
-      ? "Internship-Cum-Placement Offer Letter"
+      ? "Internship Offer Letter"
       : d.docType === "internship-placement"
         ? "Internship-Cum-Placement Offer Letter"
         : d.docType === "offer"
@@ -110,15 +110,19 @@ function Intro({ d }: { d: DocumentData }) {
 }
 
 function PerformancePage({ d }: { d: DocumentData }) {
+  const isPlacementTrack = d.docType === "internship-placement";
+  const engagementLabel = isPlacementTrack ? "program" : "internship";
+  const completionLabel = isPlacementTrack ? "completion certificate" : "Internship Completion Certificate";
+
   return (
     <>
-      <Title>Internship-Cum-Placement Opportunity</Title>
+      <Title>{isPlacementTrack ? "Placement Opportunity" : "Internship Opportunity"}</Title>
       <P>
-        The internship is designed to provide practical exposure and evaluate your suitability for a full-time role at AutoRevive. Upon successful completion of the 3-month internship, your overall performance will be evaluated. Based on the performance evaluation and the Company&rsquo;s business requirements, you may be considered for a full-time employment opportunity with AutoRevive.
+        The {engagementLabel} is designed to provide practical exposure and evaluate your suitability for a full-time role at AutoRevive. Upon successful completion of the 3-month {engagementLabel}, your overall performance will be evaluated. Based on the performance evaluation and the Company&rsquo;s business requirements, you may be considered for a full-time employment opportunity with AutoRevive.
       </P>
       <Title>Performance Evaluation Criteria</Title>
       <P>
-        Your internship performance will be evaluated based on the following factors:
+        Your {isPlacementTrack ? "performance" : "internship performance"} will be evaluated based on the following factors:
       </P>
       <ul className="mb-[4mm] list-disc space-y-[1.5mm] pl-[8mm] text-[3.6mm] leading-[1.7] text-doc-ink">
         <li>Technical and functional performance</li>
@@ -132,7 +136,7 @@ function PerformancePage({ d }: { d: DocumentData }) {
       </ul>
       <Title>Placement &amp; Starting Compensation</Title>
       <P>
-        If selected for full-time employment based on the internship performance evaluation, you will be offered a starting compensation of <B>
+        If selected for full-time employment based on the {isPlacementTrack ? "performance" : "internship performance"} evaluation, you will be offered a starting compensation of <B>
           {d.ctc 
             ? `₹${new Intl.NumberFormat('en-IN').format(parseAmount(d.ctc))} per annum`
             : "₹XX,XXX per annum"
@@ -140,27 +144,30 @@ function PerformancePage({ d }: { d: DocumentData }) {
         </B>. The final designation, compensation, employment terms, and applicable benefits will be communicated separately through the Employment/Appointment Letter.
       </P>
       <P>
-        Full-time employment is subject to satisfactory internship performance, successful evaluation, availability of a suitable position, and the Company&rsquo;s business requirements. Completion of the internship does not constitute an automatic entitlement to employment.
+        Full-time employment is subject to satisfactory {isPlacementTrack ? "performance" : "internship performance"}, successful evaluation, availability of a suitable position, and the Company&rsquo;s business requirements. Completion of the {engagementLabel} does not constitute an automatic entitlement to employment.
       </P>
-      <Title>Internship Compensation &amp; Completion Certificate</Title>
+      <Title>{isPlacementTrack ? "Program Compensation & Completion" : "Internship Compensation & Completion Certificate"}</Title>
       <P>
-        The internship is <B>{d.stipend?.toLowerCase() === "unpaid" ? "unpaid" : d.stipend}</B>
+        The {engagementLabel} is <B>{d.stipend?.toLowerCase() === "unpaid" ? "unpaid" : d.stipend}</B>
         {d.stipend?.toLowerCase() === "unpaid"
-          ? " and does not carry any stipend or salary. An Internship Completion Certificate will be issued upon successful completion of the internship, subject to the Company&rsquo;s applicable policies."
-          : " per month. An Internship Completion Certificate will be issued upon successful completion of the internship, subject to the Company&rsquo;s applicable policies."}
+          ? ` and does not carry any stipend or salary. A ${completionLabel} will be issued upon successful completion of the ${engagementLabel}, subject to the Company&rsquo;s applicable policies.`
+          : ` per month. A ${completionLabel} will be issued upon successful completion of the ${engagementLabel}, subject to the Company&rsquo;s applicable policies.`}
       </P>
     </>
   );
 }
 
 function TermsPage({ d }: { d: DocumentData }) {
+  const isPlacementTrack = d.docType === "internship-placement";
+  const engagementLabel = isPlacementTrack ? "engagement" : "internship";
+
   return (
     <>
       <Title>Terms &amp; Conditions</Title>
       <ol className="list-decimal space-y-[2.5mm] pl-[7mm] text-[3.6mm] leading-[1.8] text-doc-ink">
-        <li>Your internship is subject to verification of all documents submitted by you.</li>
+        <li>Your {engagementLabel} is subject to verification of all documents submitted by you.</li>
         <li>
-          During your internship engagement, you shall maintain strict confidentiality of all company
+          During your {engagementLabel}, you shall maintain strict confidentiality of all company
           information, client data, and business operations.
         </li>
         <li>
@@ -175,7 +182,7 @@ function TermsPage({ d }: { d: DocumentData }) {
           environment while working remotely.
         </li>
         <li>
-          Either party may terminate this internship engagement by providing {d.noticePeriod} written notice or
+          Either party may terminate this {engagementLabel} by providing {d.noticePeriod} written notice or
           payment in lieu of notice, as per Company policy.
         </li>
         <li>
@@ -188,9 +195,12 @@ function TermsPage({ d }: { d: DocumentData }) {
 }
 
 function ClosingPage({ d }: { d: DocumentData }) {
+  const isPlacementTrack = d.docType === "internship-placement";
+  const experienceLabel = isPlacementTrack ? "experience" : "internship experience";
+
   return (
     <>
-      <Title>Documents Required for Internship Joining</Title>
+      <Title>{isPlacementTrack ? "Documents Required for Joining" : "Documents Required for Internship Joining"}</Title>
       <ul className="mb-[4mm] list-disc space-y-[1.5mm] pl-[8mm] text-[3.6mm] leading-[1.7] text-doc-ink">
         <li>Aadhaar Card</li>
         <li>PAN Card</li>
@@ -202,10 +212,10 @@ function ClosingPage({ d }: { d: DocumentData }) {
       <P>
         Kindly sign and return a copy of this letter as a token of your acceptance on or before{" "}
         <B>{fmt(d.acceptByDate, "________")}</B>. We welcome you to AutoRevive and look forward to a
-        successful and rewarding internship experience.
+        successful and rewarding {experienceLabel}.
       </P>
       <P>
-        Should you have any questions regarding this internship offer, please feel free to contact our
+        Should you have any questions regarding this {isPlacementTrack ? "offer" : "internship offer"}, please feel free to contact our
         Human Resources department at <B>hr@autorevives.com</B> or <B>+91 9489991230</B>.
       </P>
     </>
@@ -215,11 +225,11 @@ function ClosingPage({ d }: { d: DocumentData }) {
 /** Returns the page bodies for the selected document type. Signature goes on the last page. */
 export function buildPages(d: DocumentData): ReactNode[] {
   const pages: ReactNode[] = [<Intro key="intro" d={d} />];
-  if (isInternshipType(d.docType)) pages.push(<PerformancePage key="perf" d={d} />);
-  
+  if (d.docType === "internship-placement") pages.push(<PerformancePage key="perf" d={d} />);
+
   // Show salary page for offer/appointment letters OR for internship-cum-placement with CTC
   const annualCtc = parseAmount(d.ctc);
-  const showSalary = (d.docType === "offer" || d.docType === "appointment") || 
+  const showSalary = (d.docType === "offer" || d.docType === "appointment") ||
                      (d.docType === "internship-placement" && annualCtc > 0);
   if (showSalary && annualCtc > 0) pages.push(<SalaryPage key="salary" annualCtc={annualCtc} />);
   

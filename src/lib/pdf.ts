@@ -29,13 +29,22 @@ export async function exportPdf(root: HTMLElement, fileName: string) {
 
   for (let i = 0; i < pages.length; i++) {
     const page = pages[i]!;
+    const widthMm = A4.w;
+    const heightMm = A4.h;
+
+    page.style.width = `${widthMm}mm`;
+    page.style.height = `${heightMm}mm`;
+    page.style.overflow = "visible";
+
     const canvas = await html2canvas(page, {
       scale: 2,
       useCORS: true,
       backgroundColor: "#ffffff",
       logging: false,
-      windowWidth: page.scrollWidth,
-      windowHeight: page.scrollHeight,
+      width: page.offsetWidth || widthMm * 3.78,
+      height: page.offsetHeight || heightMm * 3.78,
+      windowWidth: page.offsetWidth || widthMm * 3.78,
+      windowHeight: page.offsetHeight || heightMm * 3.78,
     });
     const img = canvas.toDataURL("image/jpeg", 0.95);
     if (i > 0) pdf.addPage("a4", "portrait");

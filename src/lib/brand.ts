@@ -6,7 +6,7 @@ export const BRAND = {
   tagline: "UNLOCK. BID. DRIVE.",
   phone: "+91 9489991230",
   email: "hr@autorevives.com",
-  website: "www.autorevives.com",
+  website: "www.autorevive.com",
   footerEmail: "hr@autorevives.com",
   footerWebsite: "www.autorevive.com",
   address: "99 B, Kuppusamy Reddy Street, Uthangarai, Krishnagiri - 635207, Tamil Nadu, India.",
