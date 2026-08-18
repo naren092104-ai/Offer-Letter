@@ -8,7 +8,7 @@ export const BRAND = {
   email: "hr@autorevives.com",
   website: "www.autorevive.com",
   footerEmail: "hr@autorevives.com",
-  footerWebsite: "www.autorevive.com",
+  footerWebsite: "www.autorevives.com",
   address: "99 B, Kuppusamy Reddy Street, Uthangarai, Krishnagiri - 635207, Tamil Nadu, India.",
   hrName: "Jemsina Banu S",
   hrTitle: "Human Resources",
@@ -50,6 +50,7 @@ export interface DocumentData {
   candidateAddress: string;
   position: string;
   startDate: string;
+  dateOfJoining: string;
   workModel: string;
   duration: string;
   stipend: string;
@@ -68,6 +69,7 @@ export const defaultDocumentData: DocumentData = {
   candidateAddress: "",
   position: "",
   startDate: "",
+  dateOfJoining: "",
   workModel: "Hybrid Model",
   duration: "3 Months",
   stipend: "Unpaid",

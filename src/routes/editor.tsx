@@ -218,6 +218,13 @@ function Editor() {
                 onChange={(e) => set("startDate", e.target.value)}
               />
             </Field>
+            <Field label="Date of joining">
+              <Input
+                type="date"
+                value={data.dateOfJoining}
+                onChange={(e) => set("dateOfJoining", e.target.value)}
+              />
+            </Field>
             <Field label="Work model">
               <select
                 className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"

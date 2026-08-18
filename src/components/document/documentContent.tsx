@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { isInternshipType, type DocumentData } from "@/lib/brand";
+import { BRAND, isInternshipType, type DocumentData } from "@/lib/brand";
 import { parseAmount } from "@/lib/salary";
 import { SalaryPage } from "./SalarySection";
 
@@ -33,6 +33,7 @@ const Title = ({ children }: { children: ReactNode }) => (
 
 function Intro({ d }: { d: DocumentData }) {
   const name = `${d.salutation} ${d.candidateName || "________"}`;
+  const isInternship = isInternshipType(d.docType);
   const label =
     d.docType === "internship"
       ? "Internship Offer Letter"
@@ -41,10 +42,11 @@ function Intro({ d }: { d: DocumentData }) {
         : d.docType === "offer"
           ? "Offer Letter"
           : "Appointment Letter";
+
   return (
     <>
       <p className="text-[3.6mm] font-bold text-doc-ink">
-        {isInternshipType(d.docType) ? "Offer Letter No.:" : "Reference No.:"} {d.refNo}
+        {isInternship ? "Offer Letter No.:" : "Reference No.:"} {d.refNo}
       </p>
       <p className="mt-[3mm] text-[3.6mm] font-bold text-doc-ink">To,</p>
       <p className="text-[3.6mm] font-bold text-doc-ink">{name},</p>
@@ -60,7 +62,7 @@ function Intro({ d }: { d: DocumentData }) {
       <P>
         <B>Dear {name},</B>
       </P>
-      {isInternshipType(d.docType) ? (
+      {isInternship ? (
         <>
           <P>
             We are pleased to offer you a 3-month internship with the position of{" "}
@@ -111,18 +113,21 @@ function Intro({ d }: { d: DocumentData }) {
 
 function PerformancePage({ d }: { d: DocumentData }) {
   const isPlacementTrack = d.docType === "internship-placement";
+  const isInternship = isInternshipType(d.docType);
   const engagementLabel = isPlacementTrack ? "program" : "internship";
   const completionLabel = isPlacementTrack ? "completion certificate" : "Internship Completion Certificate";
 
   return (
     <>
-      <Title>{isPlacementTrack ? "Placement Opportunity" : "Internship Opportunity"}</Title>
+      <Title>{isPlacementTrack ? "Placement Opportunity" : isInternship ? "Internship Opportunity" : "Employment Opportunity"}</Title>
       <P>
-        The {engagementLabel} is designed to provide practical exposure and evaluate your suitability for a full-time role at AutoRevive. Upon successful completion of the 3-month {engagementLabel}, your overall performance will be evaluated. Based on the performance evaluation and the Company&rsquo;s business requirements, you may be considered for a full-time employment opportunity with AutoRevive.
+        {isInternship
+          ? `The ${engagementLabel} is designed to provide practical exposure and evaluate your suitability for a full-time role at AutoRevive. Upon successful completion of the 3-month ${engagementLabel}, your overall performance will be evaluated. Based on the performance evaluation and the Company&rsquo;s business requirements, you may be considered for a full-time employment opportunity with AutoRevive.`
+          : "The opportunity is designed to provide practical exposure and evaluate your suitability for a full-time role at AutoRevive. Your performance will be reviewed based on the Company&rsquo;s business requirements and role expectations."}
       </P>
       <Title>Performance Evaluation Criteria</Title>
       <P>
-        Your {isPlacementTrack ? "performance" : "internship performance"} will be evaluated based on the following factors:
+        Your {isInternship ? (isPlacementTrack ? "performance" : "internship performance") : "performance"} will be evaluated based on the following factors:
       </P>
       <ul className="mb-[4mm] list-disc space-y-[1.5mm] pl-[8mm] text-[3.6mm] leading-[1.7] text-doc-ink">
         <li>Technical and functional performance</li>
@@ -134,40 +139,66 @@ function PerformancePage({ d }: { d: DocumentData }) {
         <li>Overall contribution to the Company</li>
         <li>Ability to take responsibility and work independently</li>
       </ul>
-      <Title>Placement &amp; Starting Compensation</Title>
+      <Title>{isInternship ? "Placement & Starting Compensation" : "Compensation & Employment Terms"}</Title>
       <P>
-        If selected for full-time employment based on the {isPlacementTrack ? "performance" : "internship performance"} evaluation, you will be offered a starting compensation of <B>
-          {d.ctc 
-            ? `₹${new Intl.NumberFormat('en-IN').format(parseAmount(d.ctc))} per annum`
-            : "₹XX,XXX per annum"
-          }
-        </B>. The final designation, compensation, employment terms, and applicable benefits will be communicated separately through the Employment/Appointment Letter.
+        {isInternship ? (
+          <>
+            If selected for full-time employment based on the {isPlacementTrack ? "performance" : "internship performance"} evaluation, you will be offered a starting compensation of <B>
+              {d.ctc
+                ? `₹${new Intl.NumberFormat('en-IN').format(parseAmount(d.ctc))} per annum`
+                : "₹XX,XXX per annum"
+              }
+            </B>. The final designation, compensation, employment terms, and applicable benefits will be communicated separately through the Employment/Appointment Letter.
+          </>
+        ) : (
+          <>
+            You will be offered a starting compensation of <B>
+              {d.ctc
+                ? `₹${new Intl.NumberFormat('en-IN').format(parseAmount(d.ctc))} per annum`
+                : "₹XX,XXX per annum"
+              }
+            </B>. The final designation, compensation, employment terms, and applicable benefits will be communicated separately through the Employment/Appointment Letter.
+          </>
+        )}
       </P>
       <P>
-        Full-time employment is subject to satisfactory {isPlacementTrack ? "performance" : "internship performance"}, successful evaluation, availability of a suitable position, and the Company&rsquo;s business requirements. Completion of the {engagementLabel} does not constitute an automatic entitlement to employment.
+        {isInternship
+          ? `Full-time employment is subject to satisfactory ${isPlacementTrack ? "performance" : "internship performance"}, successful evaluation, availability of a suitable position, and the Company&rsquo;s business requirements. Completion of the ${engagementLabel} does not constitute an automatic entitlement to employment.`
+          : "Full-time employment is subject to satisfactory performance, successful evaluation, availability of a suitable position, and the Company&rsquo;s business requirements. Employment does not constitute an automatic entitlement to continued service."}
       </P>
-      <Title>{isPlacementTrack ? "Program Compensation & Completion" : "Internship Compensation & Completion Certificate"}</Title>
+      <Title>{isInternship ? (isPlacementTrack ? "Program Compensation & Completion" : "Internship Compensation & Completion Certificate") : "Compensation Details"}</Title>
       <P>
-        The {engagementLabel} is <B>{d.stipend?.toLowerCase() === "unpaid" ? "unpaid" : d.stipend}</B>
-        {d.stipend?.toLowerCase() === "unpaid"
-          ? ` and does not carry any stipend or salary. A ${completionLabel} will be issued upon successful completion of the ${engagementLabel}, subject to the Company&rsquo;s applicable policies.`
-          : ` per month. A ${completionLabel} will be issued upon successful completion of the ${engagementLabel}, subject to the Company&rsquo;s applicable policies.`}
+        {isInternship ? (
+          <>
+            The {engagementLabel} is <B>{d.stipend?.toLowerCase() === "unpaid" ? "unpaid" : d.stipend}</B>
+            {d.stipend?.toLowerCase() === "unpaid"
+              ? ` and does not carry any stipend or salary. A ${completionLabel} will be issued upon successful completion of the ${engagementLabel}, subject to the Company&rsquo;s applicable policies.`
+              : ` per month. A ${completionLabel} will be issued upon successful completion of the ${engagementLabel}, subject to the Company&rsquo;s applicable policies.`}
+          </>
+        ) : (
+          <>
+            Your employment is <B>{d.stipend?.toLowerCase() === "unpaid" ? "unpaid" : d.stipend}</B>
+            {d.stipend?.toLowerCase() === "unpaid"
+              ? " and does not carry any stipend or salary. Compensation details will be confirmed as part of the formal employment terms."
+              : " per month. Compensation details will be confirmed as part of the formal employment terms."}
+          </>
+        )}
       </P>
     </>
   );
 }
 
 function TermsPage({ d }: { d: DocumentData }) {
-  const isPlacementTrack = d.docType === "internship-placement";
-  const engagementLabel = isPlacementTrack ? "engagement" : "internship";
+  const isInternship = isInternshipType(d.docType);
+  const engagementLabel = d.docType === "internship-placement" ? "engagement" : isInternship ? "internship" : "employment";
 
   return (
     <>
       <Title>Terms &amp; Conditions</Title>
       <ol className="list-decimal space-y-[2.5mm] pl-[7mm] text-[3.6mm] leading-[1.8] text-doc-ink">
-        <li>Your {engagementLabel} is subject to verification of all documents submitted by you.</li>
+        <li>Your {isInternship ? "internship" : "employment"} is subject to verification of all documents submitted by you.</li>
         <li>
-          During your {engagementLabel}, you shall maintain strict confidentiality of all company
+          During your {isInternship ? "internship" : "employment"}, you shall maintain strict confidentiality of all company
           information, client data, and business operations.
         </li>
         <li>
@@ -195,12 +226,12 @@ function TermsPage({ d }: { d: DocumentData }) {
 }
 
 function ClosingPage({ d }: { d: DocumentData }) {
-  const isPlacementTrack = d.docType === "internship-placement";
-  const experienceLabel = isPlacementTrack ? "experience" : "internship experience";
+  const isInternship = isInternshipType(d.docType);
+  const experienceLabel = isInternship ? "internship experience" : "employment experience";
 
   return (
     <>
-      <Title>{isPlacementTrack ? "Documents Required for Joining" : "Documents Required for Internship Joining"}</Title>
+      <Title>Documents Required for Joining</Title>
       <ul className="mb-[4mm] list-disc space-y-[1.5mm] pl-[8mm] text-[3.6mm] leading-[1.7] text-doc-ink">
         <li>Aadhaar Card</li>
         <li>PAN Card</li>
@@ -211,13 +242,29 @@ function ClosingPage({ d }: { d: DocumentData }) {
       </ul>
       <P>
         Kindly sign and return a copy of this letter as a token of your acceptance on or before{" "}
-        <B>{fmt(d.acceptByDate, "________")}</B>. We welcome you to AutoRevive and look forward to a
-        successful and rewarding {experienceLabel}.
+        <B>{fmt(d.acceptByDate, "________")}</B>. The proposed date of joining is <B>{fmt(d.dateOfJoining || d.startDate, "________")}</B>.
+        We welcome you to AutoRevive and look forward to a successful and rewarding {experienceLabel}.
       </P>
       <P>
-        Should you have any questions regarding this {isPlacementTrack ? "offer" : "internship offer"}, please feel free to contact our
-        Human Resources department at <B>hr@autorevives.com</B> or <B>+91 9489991230</B>.
+        Should you have any questions regarding this {isInternship ? "internship offer" : "offer"}, please feel free to contact our
+        Human Resources department at <B>+91 9597969650</B>.
       </P>
+
+      <div className="mt-[10mm] grid grid-cols-2 items-end gap-[12mm]">
+        <div className="text-[3.6mm] text-doc-ink">
+          <p className="font-bold">For {BRAND.name}</p>
+          <div className="mt-[8mm] h-[1px] w-[45mm] border-b border-doc-rule" />
+          <p className="mt-[2mm] font-bold">{BRAND.hrName}</p>
+          <p>{BRAND.hrTitle}</p>
+          <p>{BRAND.name}.</p>
+        </div>
+
+        <div className="text-[3.6mm] text-doc-ink">
+          <p className="font-bold">Candidate Signature</p>
+          <div className="mt-[8mm] h-[1px] w-[45mm] border-b border-doc-rule" />
+          <p className="mt-[2mm] font-bold">{`${d.salutation} ${d.candidateName || "________"}`}</p>
+        </div>
+      </div>
     </>
   );
 }

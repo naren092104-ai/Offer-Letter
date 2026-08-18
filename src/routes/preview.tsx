@@ -102,21 +102,19 @@ function Preview() {
 
       <main ref={shellRef} className="mx-auto w-full max-w-[1200px] px-2 py-6 sm:px-6">
         <div className="overflow-x-auto">
-          <div
-            className="mx-auto"
-            style={{ width: `${210 * zoom}mm` }}
-            aria-label="A4 document preview"
-          >
+          <div className="mx-auto flex justify-center" aria-label="A4 document preview">
             <div
-              className="a4-scale origin-top-left"
-              style={{ transform: `scale(${zoom})`, width: "210mm" }}
+              id="print-root"
+              ref={printRef}
+              style={{
+                width: "210mm",
+                zoom: `${zoom}`,
+                transformOrigin: "top center",
+              }}
             >
-              <div id="print-root" ref={printRef}>
-                <A4Document data={data} signature={signature} showSignaturePlaceholder />
-              </div>
+              <A4Document data={data} signature={signature} showSignaturePlaceholder />
             </div>
           </div>
-          <div style={{ height: `calc((297mm * ${zoom} + 8mm) * 0)` }} />
         </div>
       </main>
     </div>

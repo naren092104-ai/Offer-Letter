@@ -43,7 +43,6 @@ export function DocumentHeader() {
           <div className="flex flex-col justify-center gap-[2.5mm]">
             <ContactRow icon={<PhoneIcon />} text={BRAND.phone} />
             <ContactRow icon={<MailIcon />} text={BRAND.email} />
-            <ContactRow icon={<GlobeIcon />} text={BRAND.website} />
           </div>
         </div>
       </div>
