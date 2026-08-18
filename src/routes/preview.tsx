@@ -33,7 +33,7 @@ export const Route = createFileRoute("/preview")({
 const MM_PER_PX = 96 / 25.4; // px per mm at 96dpi
 
 function Preview() {
-  const { data, signature } = useStudio();
+  const { data, hrSignature } = useStudio();
   const navigate = useNavigate();
   const printRef = useRef<HTMLDivElement>(null);
   const shellRef = useRef<HTMLDivElement>(null);
@@ -53,7 +53,7 @@ function Preview() {
   }, []);
 
   async function generate() {
-    if (!hasSignature(signature)) {
+    if (!hasSignature(hrSignature)) {
       toast.error("Please add an HR signature in the editor before generating the PDF.");
       return;
     }
@@ -112,7 +112,7 @@ function Preview() {
                 transformOrigin: "top center",
               }}
             >
-              <A4Document data={data} signature={signature} showSignaturePlaceholder />
+              <A4Document data={data} hrSignature={hrSignature} showSignaturePlaceholder />
             </div>
           </div>
         </div>

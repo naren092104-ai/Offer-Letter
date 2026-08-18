@@ -7,14 +7,14 @@ import type { SignatureState } from "@/lib/signature";
 
 export function A4Document({
   data,
-  signature,
+  hrSignature,
   showSignaturePlaceholder,
 }: {
   data: DocumentData;
-  signature: SignatureState;
+  hrSignature: SignatureState;
   showSignaturePlaceholder?: boolean | undefined;
 }) {
-  const pages = buildPages(data);
+  const pages = buildPages(data, hrSignature);
 
   return (
     <div className="a4-stack">

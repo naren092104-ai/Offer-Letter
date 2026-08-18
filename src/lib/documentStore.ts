@@ -8,12 +8,14 @@ import { defaultSignature, type SignatureState } from "./signature";
  */
 export interface StudioState {
   data: DocumentData;
-  signature: SignatureState;
+  hrSignature: SignatureState;
+  candidateSignature: SignatureState;
 }
 
 let state: StudioState = {
   data: { ...defaultDocumentData, date: new Date().toISOString().slice(0, 10) },
-  signature: { ...defaultSignature },
+  hrSignature: { ...defaultSignature },
+  candidateSignature: { ...defaultSignature },
 };
 
 const listeners = new Set<() => void>();
@@ -36,8 +38,13 @@ export function setDocumentData(updater: (d: DocumentData) => DocumentData) {
   emit();
 }
 
-export function setSignatureState(updater: (s: SignatureState) => SignatureState) {
-  state = { ...state, signature: updater(state.signature) };
+export function setHRSignatureState(updater: (s: SignatureState) => SignatureState) {
+  state = { ...state, hrSignature: updater(state.hrSignature) };
+  emit();
+}
+
+export function setCandidateSignatureState(updater: (s: SignatureState) => SignatureState) {
+  state = { ...state, candidateSignature: updater(state.candidateSignature) };
   emit();
 }
 

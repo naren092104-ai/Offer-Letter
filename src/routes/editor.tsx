@@ -11,7 +11,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { SignaturePad } from "@/components/document/SignaturePad";
 import { BRAND, DOCUMENT_TYPES, isInternshipType } from "@/lib/brand";
 import type { DocumentData, DocumentType } from "@/lib/brand";
-import { setDocumentData, setSignatureState, useStudio } from "@/lib/documentStore";
+import { setDocumentData, setHRSignatureState, setCandidateSignatureState, useStudio } from "@/lib/documentStore";
 import { SIGNATURE_FONTS, defaultSignature, hasSignature } from "@/lib/signature";
 
 export const Route = createFileRoute("/editor")({
@@ -79,17 +79,22 @@ function Step({
 }
 
 function Editor() {
-  const { data, signature } = useStudio();
+  const { data, hrSignature, candidateSignature } = useStudio();
   const navigate = useNavigate();
   const [drawing, setDrawing] = useState(false);
+  const [candidateDrawing, setCandidateDrawing] = useState(false);
   const [typedDraft, setTypedDraft] = useState<string>(BRAND.hrName);
+  const [candidateTypedDraft, setCandidateTypedDraft] = useState<string>(data.candidateName);
   const [typedFont, setTypedFont] = useState<string>(SIGNATURE_FONTS[0].css);
+  const [candidateTypedFont, setCandidateTypedFont] = useState<string>(SIGNATURE_FONTS[0].css);
   const fileRef = useRef<HTMLInputElement>(null);
+  const candidateFileRef = useRef<HTMLInputElement>(null);
 
   const set = <K extends keyof DocumentData>(k: K, v: DocumentData[K]) =>
     setDocumentData((d) => ({ ...d, [k]: v }));
 
-  const signed = useMemo(() => hasSignature(signature), [signature]);
+  const signed = useMemo(() => hasSignature(hrSignature), [hrSignature]);
+  const candidateSigned = useMemo(() => hasSignature(candidateSignature), [candidateSignature]);
 
   function onUpload(file: File | undefined) {
     if (!file) return;
@@ -99,7 +104,19 @@ function Editor() {
     }
     const reader = new FileReader();
     reader.onload = () =>
-      setSignatureState((s) => ({ ...s, mode: "upload", imageUrl: String(reader.result) }));
+      setHRSignatureState((s) => ({ ...s, mode: "upload", imageUrl: String(reader.result) }));
+    reader.readAsDataURL(file);
+  }
+
+  function onCandidateUpload(file: File | undefined) {
+    if (!file) return;
+    if (!/image\/(png|jpe?g|webp)/.test(file.type)) {
+      toast.error("Please choose a PNG, JPG or WEBP image.");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () =>
+      setCandidateSignatureState((s) => ({ ...s, mode: "upload", imageUrl: String(reader.result) }));
     reader.readAsDataURL(file);
   }
 
@@ -211,20 +228,6 @@ function Editor() {
                 onChange={(e) => set("position", e.target.value)}
               />
             </Field>
-            <Field label="Start date">
-              <Input
-                type="date"
-                value={data.startDate}
-                onChange={(e) => set("startDate", e.target.value)}
-              />
-            </Field>
-            <Field label="Date of joining">
-              <Input
-                type="date"
-                value={data.dateOfJoining}
-                onChange={(e) => set("dateOfJoining", e.target.value)}
-              />
-            </Field>
             <Field label="Work model">
               <select
                 className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
@@ -263,13 +266,6 @@ function Editor() {
                     onChange={(e) => set("ctc", e.target.value)}
                   />
                 </Field>
-                <Field label="Reporting to">
-                  <Input
-                    value={data.reportingTo}
-                    placeholder="Engineering Lead"
-                    onChange={(e) => set("reportingTo", e.target.value)}
-                  />
-                </Field>
               </>
             )}
             <Field label="Accept on or before">
@@ -296,7 +292,7 @@ function Editor() {
           <div className="mb-4 grid grid-cols-3 gap-2">
             <Button
               type="button"
-              variant={signature.mode === "upload" ? "default" : "outline"}
+              variant={hrSignature.mode === "upload" ? "default" : "outline"}
               size="sm"
               onClick={() => fileRef.current?.click()}
             >
@@ -304,7 +300,7 @@ function Editor() {
             </Button>
             <Button
               type="button"
-              variant={signature.mode === "draw" ? "default" : "outline"}
+              variant={hrSignature.mode === "draw" ? "default" : "outline"}
               size="sm"
               onClick={() => setDrawing(true)}
             >
@@ -312,10 +308,10 @@ function Editor() {
             </Button>
             <Button
               type="button"
-              variant={signature.mode === "type" ? "default" : "outline"}
+              variant={hrSignature.mode === "type" ? "default" : "outline"}
               size="sm"
               onClick={() =>
-                setSignatureState((s) => ({
+                setHRSignatureState((s) => ({
                   ...s,
                   mode: "type",
                   imageUrl: null,
@@ -340,7 +336,7 @@ function Editor() {
               <SignaturePad
                 onCancel={() => setDrawing(false)}
                 onSave={(url) => {
-                  setSignatureState((s) => ({ ...s, mode: "draw", imageUrl: url }));
+                  setHRSignatureState((s) => ({ ...s, mode: "draw", imageUrl: url }));
                   setDrawing(false);
                   toast.success("Signature saved to the letter.");
                 }}
@@ -348,14 +344,14 @@ function Editor() {
             </div>
           ) : null}
 
-          {signature.mode === "type" ? (
+          {hrSignature.mode === "type" ? (
             <div className="mb-4 space-y-3 rounded-xl border border-border p-3">
               <Field label="Signature text">
                 <Input
                   value={typedDraft}
                   onChange={(e) => {
                     setTypedDraft(e.target.value);
-                    setSignatureState((s) => ({ ...s, typedText: e.target.value }));
+                    setHRSignatureState((s) => ({ ...s, typedText: e.target.value }));
                   }}
                 />
               </Field>
@@ -366,10 +362,10 @@ function Editor() {
                     type="button"
                     onClick={() => {
                       setTypedFont(f.css);
-                      setSignatureState((s) => ({ ...s, fontCss: f.css }));
+                      setHRSignatureState((s) => ({ ...s, fontCss: f.css }));
                     }}
                     className={`rounded-lg border px-3 py-2 text-left transition-colors ${
-                      signature.fontCss === f.css
+                      hrSignature.fontCss === f.css
                         ? "border-primary bg-accent"
                         : "border-border hover:bg-secondary"
                     }`}
@@ -388,13 +384,13 @@ function Editor() {
             <div className="space-y-4 rounded-xl border border-border p-3">
               <div className="flex items-center justify-between gap-3">
                 <div className="flex h-14 flex-1 items-center overflow-hidden rounded-lg bg-secondary px-3">
-                  {signature.mode === "type" ? (
-                    <span className="text-2xl" style={{ fontFamily: signature.fontCss }}>
-                      {signature.typedText}
+                  {hrSignature.mode === "type" ? (
+                    <span className="text-2xl" style={{ fontFamily: hrSignature.fontCss }}>
+                      {hrSignature.typedText}
                     </span>
                   ) : (
                     <img
-                      src={signature.imageUrl ?? ""}
+                      src={hrSignature.imageUrl ?? ""}
                       alt="Signature preview"
                       className="max-h-12 w-auto object-contain"
                     />
@@ -404,19 +400,19 @@ function Editor() {
                   type="button"
                   variant="ghost"
                   size="sm"
-                  onClick={() => setSignatureState(() => defaultSignature)}
+                  onClick={() => setHRSignatureState(() => defaultSignature)}
                 >
                   <Trash2 /> Remove
                 </Button>
               </div>
 
-              <Field label={`Size — ${signature.width}mm`}>
+              <Field label={`Size — ${hrSignature.width}mm`}>
                 <Slider
                   min={20}
                   max={70}
                   step={1}
-                  value={[signature.width]}
-                  onValueChange={([v]) => setSignatureState((s) => ({ ...s, width: v ?? s.width }))}
+                  value={[hrSignature.width]}
+                  onValueChange={([v]) => setHRSignatureState((s) => ({ ...s, width: v ?? s.width }))}
                 />
               </Field>
               <div className="grid grid-cols-2 gap-4">
@@ -425,9 +421,9 @@ function Editor() {
                     min={-15}
                     max={25}
                     step={1}
-                    value={[signature.offsetX]}
+                    value={[hrSignature.offsetX]}
                     onValueChange={([v]) =>
-                      setSignatureState((s) => ({ ...s, offsetX: v ?? s.offsetX }))
+                      setHRSignatureState((s) => ({ ...s, offsetX: v ?? s.offsetX }))
                     }
                   />
                 </Field>
@@ -436,9 +432,9 @@ function Editor() {
                     min={-8}
                     max={8}
                     step={1}
-                    value={[signature.offsetY]}
+                    value={[hrSignature.offsetY]}
                     onValueChange={([v]) =>
-                      setSignatureState((s) => ({ ...s, offsetY: v ?? s.offsetY }))
+                      setHRSignatureState((s) => ({ ...s, offsetY: v ?? s.offsetY }))
                     }
                   />
                 </Field>

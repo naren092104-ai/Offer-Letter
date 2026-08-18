@@ -2,12 +2,13 @@ import type { ReactNode } from "react";
 import { BRAND, isInternshipType, type DocumentData } from "@/lib/brand";
 import { parseAmount } from "@/lib/salary";
 import { SalaryPage } from "./SalarySection";
+import type { SignatureState } from "@/lib/signature";
 
 const fmt = (iso: string, fallback: string) => {
   if (!iso) return fallback;
   const d = new Date(iso + "T00:00:00");
   if (Number.isNaN(d.getTime())) return iso;
-  return d.toLocaleDateString("en-GB", { day: "2-digit", month: "long", year: "numeric" });
+  return d.toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric" });
 };
 
 const B = ({ children }: { children: ReactNode }) => (
@@ -225,9 +226,10 @@ function TermsPage({ d }: { d: DocumentData }) {
   );
 }
 
-function ClosingPage({ d }: { d: DocumentData }) {
+function ClosingPage({ d, hrSignature }: { d: DocumentData; hrSignature: SignatureState }) {
   const isInternship = isInternshipType(d.docType);
   const experienceLabel = isInternship ? "internship experience" : "employment experience";
+  const hrPresent = hrSignature && (hrSignature.mode === "type" ? !!hrSignature.typedText : !!hrSignature.imageUrl);
 
   return (
     <>
@@ -250,10 +252,31 @@ function ClosingPage({ d }: { d: DocumentData }) {
         Human Resources department at <B>+91 9597969650</B>.
       </P>
 
-      <div className="mt-[10mm] grid grid-cols-2 items-end gap-[12mm]">
+      <div className="mt-[10mm] grid grid-cols-2 items-start gap-[12mm]">
         <div className="text-[3.6mm] text-doc-ink">
           <p className="font-bold">For {BRAND.name}</p>
-          <div className="mt-[8mm] h-[1px] w-[45mm] border-b border-doc-rule" />
+          {hrPresent && (
+            <div className="mt-[1mm] mb-[1mm]">
+              {hrSignature.mode === "type" ? (
+                <span
+                  className="leading-none text-doc-ink"
+                  style={{
+                    fontFamily: hrSignature.fontCss,
+                    fontSize: `${Math.max(6, hrSignature.width / 4.5)}mm`,
+                  }}
+                >
+                  {hrSignature.typedText}
+                </span>
+              ) : (
+                <img
+                  src={hrSignature.imageUrl ?? ""}
+                  alt="HR signature"
+                  style={{ width: `${hrSignature.width}mm` }}
+                  className="h-auto max-h-[20mm] w-auto object-contain"
+                />
+              )}
+            </div>
+          )}
           <p className="mt-[2mm] font-bold">{BRAND.hrName}</p>
           <p>{BRAND.hrTitle}</p>
           <p>{BRAND.name}.</p>
@@ -262,7 +285,9 @@ function ClosingPage({ d }: { d: DocumentData }) {
         <div className="text-[3.6mm] text-doc-ink">
           <p className="font-bold">Candidate Signature</p>
           <div className="mt-[8mm] h-[1px] w-[45mm] border-b border-doc-rule" />
-          <p className="mt-[2mm] font-bold">{`${d.salutation} ${d.candidateName || "________"}`}</p>
+          <p className="mt-[2mm] font-bold">{d.candidateName}</p>
+          <p>{d.position}</p>
+          <p>{BRAND.name}.</p>
         </div>
       </div>
     </>
@@ -270,7 +295,7 @@ function ClosingPage({ d }: { d: DocumentData }) {
 }
 
 /** Returns the page bodies for the selected document type. Signature goes on the last page. */
-export function buildPages(d: DocumentData): ReactNode[] {
+export function buildPages(d: DocumentData, hrSignature: SignatureState): ReactNode[] {
   const pages: ReactNode[] = [<Intro key="intro" d={d} />];
   if (d.docType === "internship-placement") pages.push(<PerformancePage key="perf" d={d} />);
 
@@ -281,6 +306,6 @@ export function buildPages(d: DocumentData): ReactNode[] {
   if (showSalary && annualCtc > 0) pages.push(<SalaryPage key="salary" annualCtc={annualCtc} />);
   
   pages.push(<TermsPage key="terms" d={d} />);
-  pages.push(<ClosingPage key="close" d={d} />);
+  pages.push(<ClosingPage key="close" d={d} hrSignature={hrSignature} />);
   return pages;
 }
