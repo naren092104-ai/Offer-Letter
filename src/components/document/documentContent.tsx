@@ -11,23 +11,29 @@ const fmt = (iso: string, fallback: string) => {
   return d.toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric" });
 };
 
+const fmtCtc = (value: string, fallback = "₹XX,XXX") => {
+  const amount = parseAmount(value);
+  if (!amount) return fallback;
+  return `${(amount / 100000).toFixed(2).replace(/\.00$/, "").replace(/(\.\d)0$/, "$1")} LPA`;
+};
+
 const B = ({ children }: { children: ReactNode }) => (
   <strong className="font-bold">{children}</strong>
 );
 
 const Section = ({ title, children }: { title: string; children: ReactNode }) => (
   <>
-    <h2 className="my-[6mm] text-[3.8mm] font-bold uppercase text-doc-ink">{title}</h2>
+    <h2 className="my-[6mm] text-[4mm] font-bold uppercase text-doc-ink">{title}</h2>
     {children}
   </>
 );
 
 const P = ({ children }: { children: ReactNode }) => (
-  <p className="mb-[4mm] text-justify text-[3.6mm] leading-[1.9] text-doc-ink">{children}</p>
+  <p className="mb-[5mm] text-justify text-[4mm] leading-[2] text-doc-ink">{children}</p>
 );
 
 const Title = ({ children }: { children: ReactNode }) => (
-  <h2 className="my-[8mm] text-center text-[4.4mm] font-bold uppercase tracking-wide text-doc-ink">
+  <h2 className="my-[8mm] text-center text-[4.8mm] font-bold uppercase tracking-wide text-doc-ink">
     {children}
   </h2>
 );
@@ -75,7 +81,7 @@ function Intro({ d }: { d: DocumentData }) {
           <P>
             <B>Internship Details:</B>
           </P>
-          <ul className="mb-[4mm] list-disc space-y-[1mm] pl-[8mm] text-[3.6mm] leading-[1.7] text-doc-ink">
+          <ul className="mb-[4mm] list-disc space-y-[1.5mm] pl-[8mm] text-[3.9mm] leading-[1.8] text-doc-ink">
             <li>Position: <B>{d.position || "________"}</B></li>
             <li>Internship Start Date: <B>{fmt(d.startDate, "________")}</B></li>
             <li>Internship Duration: <B>3 Months</B></li>
@@ -92,11 +98,10 @@ function Intro({ d }: { d: DocumentData }) {
             contribution to our organization.
           </P>
           <P>
-            Your employment will commence from <B>{fmt(d.startDate, "________")}</B> on a{" "}
-            <B>{d.workModel}</B>
+            Your employment will commence on a <B>{d.workModel}</B>
             {d.ctc ? (
               <>
-                , with an annual compensation of <B>{d.ctc}</B>
+                , with an annual CTC of <B>{fmtCtc(d.ctc)}</B>
               </>
             ) : null}
             {d.reportingTo ? (
@@ -130,7 +135,7 @@ function PerformancePage({ d }: { d: DocumentData }) {
       <P>
         Your {isInternship ? (isPlacementTrack ? "performance" : "internship performance") : "performance"} will be evaluated based on the following factors:
       </P>
-      <ul className="mb-[4mm] list-disc space-y-[1.5mm] pl-[8mm] text-[3.6mm] leading-[1.7] text-doc-ink">
+      <ul className="mb-[4mm] list-disc space-y-[2mm] pl-[8mm] text-[3.9mm] leading-[1.8] text-doc-ink">
         <li>Technical and functional performance</li>
         <li>Quality and timely completion of assigned work</li>
         <li>Attendance and punctuality</li>
@@ -144,21 +149,11 @@ function PerformancePage({ d }: { d: DocumentData }) {
       <P>
         {isInternship ? (
           <>
-            If selected for full-time employment based on the {isPlacementTrack ? "performance" : "internship performance"} evaluation, you will be offered a starting compensation of <B>
-              {d.ctc
-                ? `₹${new Intl.NumberFormat('en-IN').format(parseAmount(d.ctc))} per annum`
-                : "₹XX,XXX per annum"
-              }
-            </B>. The final designation, compensation, employment terms, and applicable benefits will be communicated separately through the Employment/Appointment Letter.
+            If selected for full-time employment based on the {isPlacementTrack ? "performance" : "internship performance"} evaluation, you will be offered an annual CTC of <B>{fmtCtc(d.ctc)}</B>. The final designation, compensation, employment terms, and applicable benefits will be communicated separately through the Employment/Appointment Letter.
           </>
         ) : (
           <>
-            You will be offered a starting compensation of <B>
-              {d.ctc
-                ? `₹${new Intl.NumberFormat('en-IN').format(parseAmount(d.ctc))} per annum`
-                : "₹XX,XXX per annum"
-              }
-            </B>. The final designation, compensation, employment terms, and applicable benefits will be communicated separately through the Employment/Appointment Letter.
+            You will be offered an annual CTC of <B>{fmtCtc(d.ctc)}</B>. The final designation, compensation, employment terms, and applicable benefits will be communicated separately through the Employment/Appointment Letter.
           </>
         )}
       </P>
@@ -196,7 +191,7 @@ function TermsPage({ d }: { d: DocumentData }) {
   return (
     <>
       <Title>Terms &amp; Conditions</Title>
-      <ol className="list-decimal space-y-[2.5mm] pl-[7mm] text-[3.6mm] leading-[1.8] text-doc-ink">
+      <ol className="list-decimal space-y-[3mm] pl-[7mm] text-[3.9mm] leading-[1.9] text-doc-ink">
         <li>Your {isInternship ? "internship" : "employment"} is subject to verification of all documents submitted by you.</li>
         <li>
           During your {isInternship ? "internship" : "employment"}, you shall maintain strict confidentiality of all company
@@ -234,7 +229,7 @@ function ClosingPage({ d, hrSignature }: { d: DocumentData; hrSignature: Signatu
   return (
     <>
       <Title>Documents Required for Joining</Title>
-      <ul className="mb-[4mm] list-disc space-y-[1.5mm] pl-[8mm] text-[3.6mm] leading-[1.7] text-doc-ink">
+      <ul className="mb-[4mm] list-disc space-y-[2mm] pl-[8mm] text-[3.9mm] leading-[1.8] text-doc-ink">
         <li>Aadhaar Card</li>
         <li>PAN Card</li>
         <li>Educational Certificates</li>
@@ -253,7 +248,7 @@ function ClosingPage({ d, hrSignature }: { d: DocumentData; hrSignature: Signatu
       </P>
 
       <div className="mt-[10mm] grid grid-cols-2 items-start gap-[12mm]">
-        <div className="text-[3.6mm] text-doc-ink">
+        <div className="text-[3.9mm] text-doc-ink">
           <p className="font-bold">For {BRAND.name}</p>
           {hrPresent && (
             <div className="mt-[1mm] mb-[1mm]">
@@ -282,7 +277,7 @@ function ClosingPage({ d, hrSignature }: { d: DocumentData; hrSignature: Signatu
           <p>{BRAND.name}.</p>
         </div>
 
-        <div className="text-[3.6mm] text-doc-ink">
+        <div className="text-[3.9mm] text-doc-ink">
           <p className="font-bold">Candidate Signature</p>
           <div className="mt-[8mm] h-[1px] w-[45mm] border-b border-doc-rule" />
           <p className="mt-[2mm] font-bold">{d.candidateName}</p>

@@ -90,7 +90,16 @@ function Preview() {
             />
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={() => window.print()}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                const cleanup = () => document.documentElement.classList.remove("is-printing");
+                window.addEventListener("afterprint", cleanup, { once: true });
+                document.documentElement.classList.add("is-printing");
+                window.print();
+              }}
+            >
               <Printer /> Print
             </Button>
             <Button size="sm" onClick={generate} disabled={busy}>

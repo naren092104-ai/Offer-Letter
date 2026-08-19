@@ -26,30 +26,36 @@ export async function exportPdf(root: HTMLElement, fileName: string) {
   if (pages.length === 0) return;
 
   const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4", compress: true });
+  const previousZoom = root.style.zoom;
+  root.style.zoom = "1";
 
-  for (let i = 0; i < pages.length; i++) {
-    const page = pages[i]!;
-    const widthMm = A4.w;
-    const heightMm = A4.h;
+  try {
+    for (let i = 0; i < pages.length; i++) {
+      const page = pages[i]!;
+      const widthMm = A4.w;
+      const heightMm = A4.h;
 
-    page.style.width = `${widthMm}mm`;
-    page.style.height = `${heightMm}mm`;
-    page.style.overflow = "visible";
+      page.style.width = `${widthMm}mm`;
+      page.style.height = `${heightMm}mm`;
+      page.style.overflow = "visible";
 
-    const canvas = await html2canvas(page, {
-      scale: 2,
-      useCORS: true,
-      backgroundColor: "#ffffff",
-      logging: false,
-      width: page.offsetWidth || widthMm * 3.78,
-      height: page.offsetHeight || heightMm * 3.78,
-      windowWidth: page.offsetWidth || widthMm * 3.78,
-      windowHeight: page.offsetHeight || heightMm * 3.78,
-    });
-    const img = canvas.toDataURL("image/jpeg", 0.95);
-    if (i > 0) pdf.addPage("a4", "portrait");
-    pdf.addImage(img, "JPEG", 0, 0, A4.w, A4.h, undefined, "FAST");
+      const canvas = await html2canvas(page, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: "#ffffff",
+        logging: false,
+        width: page.offsetWidth || widthMm * 3.78,
+        height: page.offsetHeight || heightMm * 3.78,
+        windowWidth: page.offsetWidth || widthMm * 3.78,
+        windowHeight: page.offsetHeight || heightMm * 3.78,
+      });
+      const img = canvas.toDataURL("image/jpeg", 0.95);
+      if (i > 0) pdf.addPage("a4", "portrait");
+      pdf.addImage(img, "JPEG", 0, 0, A4.w, A4.h, undefined, "FAST");
+    }
+
+    pdf.save(fileName);
+  } finally {
+    root.style.zoom = previousZoom;
   }
-
-  pdf.save(fileName);
 }

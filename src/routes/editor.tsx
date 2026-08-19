@@ -245,6 +245,13 @@ function Editor() {
                   <Input value={data.duration} onChange={(e) => set("duration", e.target.value)} />
                 </Field>
                 <Field label="Stipend" hint="Type “Unpaid” or an amount like ₹8,000">
+            <Field label={isInternshipType(data.docType) ? "Internship start date" : "Joining date"}>
+              <Input
+                type="date"
+                value={data.startDate}
+                onChange={(e) => set("startDate", e.target.value)}
+              />
+            </Field>
                   <Input value={data.stipend} onChange={(e) => set("stipend", e.target.value)} />
                 </Field>
                 {data.docType === "internship-placement" && (

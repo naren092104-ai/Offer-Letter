@@ -284,8 +284,25 @@ body {
     left: 0;
     top: 0;
     width: 210mm !important;
+    height: auto !important;
+    zoom: 1 !important;
+    transform: none !important;
     margin: 0 !important;
     padding: 0 !important;
+  }
+
+  #print-root .a4-stack {
+    width: 210mm !important;
+    gap: 0 !important;
+  }
+
+  #print-root .a4-page {
+    width: 210mm !important;
+    height: 297mm !important;
+    min-width: 210mm !important;
+    min-height: 297mm !important;
+    max-width: 210mm !important;
+    max-height: 297mm !important;
   }
 
   .a4-scale,
